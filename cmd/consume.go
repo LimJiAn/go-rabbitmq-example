@@ -1,12 +1,12 @@
 /*
 Copyright © 2023 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
 import (
-	"fmt"
+	"log"
 
+	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/spf13/cobra"
 )
 
@@ -21,7 +21,50 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("consume called")
+		conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
+		if err != nil {
+			panic(err)
+		}
+		defer conn.Close()
+
+		ch, err := conn.Channel()
+		if err != nil {
+			panic(err)
+		}
+
+		defer ch.Close()
+
+		q, err := ch.QueueDeclare(
+			"hello", // name
+			false,   // durable
+			false,   // delete when unused
+			false,   // exclusive
+			false,   // no-wait
+			nil,     // arguments
+		)
+		if err != nil {
+			panic(err)
+		}
+
+		msgs, err := ch.Consume(
+			q.Name, // queue
+			"",     // consumer
+			true,   // auto-ack
+			false,  // exclusive
+			false,  // no-local
+			false,  // no-wait
+			nil,    // args
+		)
+
+		var forever chan struct{}
+		go func() {
+			for d := range msgs {
+				log.Printf("Received a message: %s", d.Body)
+			}
+		}()
+
+		log.Printf(" [*] Waiting for messages. To exit press CTRL+C")
+		<-forever
 	},
 }
 
