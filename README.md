@@ -13,6 +13,9 @@ $ git clone https://github.com/LimJiAn/go-rabbitmq-exam
 ## 👀 Usage
 #### 1. Run RabbitMQ Server (docker-compose.yml)
 ```bash
+$ docker compose build
+```
+```bash
 $ docker compose up
 ```
 #### 2. Wait 1-2 minutes
