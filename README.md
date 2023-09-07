@@ -49,9 +49,9 @@ Usage:
 
 Available Commands:
   completion  Generate the autocompletion script for the specified shell
-  consume     A brief description of your command
+  consume     receive message from queue
   help        Help about any command
-  publish     asassasasA brief description of your command
+  publish     Send message to queue. Default count is 1
 
 Flags:
   -h, --help     help for go-rabbitmq-exam
