@@ -1,5 +1,5 @@
 /*
-Copyright © 2023 NAME HERE <EMAIL ADDRESS>
+Copyright © 2023 JiAn Lim <limjian1990@gmail.com>
 */
 package cmd
 
@@ -13,13 +13,8 @@ import (
 // consumeCmd represents the consume command
 var consumeCmd = &cobra.Command{
 	Use:   "consume",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "receive message from queue",
+	Long:  "publish.go, consume.go together make a simple example of using RabbitMQ",
 	Run: func(cmd *cobra.Command, args []string) {
 		conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
 		if err != nil {
@@ -56,14 +51,15 @@ to quickly create a Cobra application.`,
 			nil,    // args
 		)
 
-		var forever chan struct{}
+		forever := make(chan bool)
+		count := 0
 		go func() {
 			for d := range msgs {
-				log.Printf("Received a message: %s", d.Body)
+				count++
+				log.Printf("Received a message: %s, count: %d", d.Body, count)
 			}
 		}()
-
-		log.Printf(" [*] Waiting for messages. To exit press CTRL+C")
+		log.Printf(" ✋ Waiting for messages. To exit press CTRL+C")
 		<-forever
 	},
 }

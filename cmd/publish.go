@@ -1,11 +1,13 @@
 /*
-Copyright © 2023 NAME HERE <EMAIL ADDRESS>
+Copyright © 2023 JiAn Lim <limjian1990@gmail.com>
 */
 package cmd
 
 import (
 	"context"
-	"fmt"
+	"log"
+	"strconv"
+	"time"
 
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/spf13/cobra"
@@ -13,18 +15,13 @@ import (
 
 // publishCmd represents the publish command
 var publishCmd = &cobra.Command{
-	Use:   "publish [exchange name] [routing key] [body]",
-	Short: "asassasasA brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Use:   "publish [send message count]",
+	Short: "Send message to queue. Default count is 1",
+	Long:  "publish.go, consume.go together make a simple example of using RabbitMQ",
 	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) != 3 {
-			fmt.Println("Usage: go run main.go publish [exchange name] [routing key] [body]")
-			return
+		sendCount := "1"
+		if len(args) >= 1 {
+			sendCount = args[0]
 		}
 
 		conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
@@ -52,17 +49,31 @@ to quickly create a Cobra application.`,
 		}
 
 		body := "Hello World!"
-		err = ch.PublishWithContext(
-			context.Background(),
-			"",         // exchange
-			queue.Name, // routing key
-			false,      // mandatory
-			false,      // immediate
-			amqp.Publishing{
-				ContentType: "text/plain",
-				Body:        []byte(body),
-			},
-		)
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+
+		count, err := strconv.Atoi(sendCount)
+		if err != nil {
+			panic(err)
+		}
+
+		for i := 1; i < count+1; i++ {
+			body = "Hello World! " + strconv.Itoa(i)
+			err = ch.PublishWithContext(ctx,
+				"",         // exchange
+				queue.Name, // routing key
+				false,      // mandatory
+				false,      // immediate
+				amqp.Publishing{
+					ContentType: "text/plain",
+					Body:        []byte(body),
+				},
+			)
+			if err != nil {
+				panic(err)
+			}
+			log.Printf(" 👋 Sent %s", body)
+		}
 	},
 }
 
