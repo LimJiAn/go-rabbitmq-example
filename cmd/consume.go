@@ -56,7 +56,7 @@ var consumeCmd = &cobra.Command{
 		go func() {
 			for d := range msgs {
 				count++
-				log.Printf("Received a message: %s, count: %d", d.Body, count)
+				log.Printf(" 🆗 Received a message: %s / Count: %d", d.Body, count)
 			}
 		}()
 		log.Printf(" ✋ Waiting for messages. To exit press CTRL+C")

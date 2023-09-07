@@ -5,6 +5,7 @@ package cmd
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"strconv"
 	"time"
@@ -48,7 +49,6 @@ var publishCmd = &cobra.Command{
 			panic(err)
 		}
 
-		body := "Hello World!"
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()
 
@@ -58,7 +58,7 @@ var publishCmd = &cobra.Command{
 		}
 
 		for i := 1; i < count+1; i++ {
-			body = "Hello World! " + strconv.Itoa(i)
+			body := fmt.Sprintf("Hello World!! [%d]", i)
 			err = ch.PublishWithContext(ctx,
 				"",         // exchange
 				queue.Name, // routing key
@@ -72,7 +72,7 @@ var publishCmd = &cobra.Command{
 			if err != nil {
 				panic(err)
 			}
-			log.Printf(" 👋 Sent %s", body)
+			log.Printf(" 📧 Sent %s", body)
 		}
 	},
 }
