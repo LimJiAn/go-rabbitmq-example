@@ -59,5 +59,15 @@ Flags:
 
 Use "go-rabbitmq-exam [command] --help" for more information about a command.
 ```
+#### 5. Example
+```bash
+$ go run main.go publish
+$ go run main.go consume
+```
+```console
+2023/09/07 20:00:00  📧 Sent Hello World!!
+2023/09/07 20:00:00  ✋ Waiting for messages. To exit press CTRL+C
+2023/09/07 20:00:00  🆗 Received a message: Hello World!! / Count: 1
+```
 ## 📚 Reference
 #### [RabbitMQ](https://www.rabbitmq.com/)
