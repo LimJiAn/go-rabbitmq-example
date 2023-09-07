@@ -49,13 +49,13 @@ var publishCmd = &cobra.Command{
 			panic(err)
 		}
 
-		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-		defer cancel()
-
 		count, err := strconv.Atoi(sendCount)
 		if err != nil {
 			panic(err)
 		}
+
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
 
 		for i := 1; i < count+1; i++ {
 			body := fmt.Sprintf("Hello World!! [%d]", i)
