@@ -6,6 +6,7 @@ package cmd
 import (
 	"log"
 
+	"github.com/LimJiAn/go-rabbitmq-exam/utils"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/spf13/cobra"
 )
@@ -17,16 +18,11 @@ var consumeCmd = &cobra.Command{
 	Long:  "publish.go, consume.go together make a simple example of using RabbitMQ",
 	Run: func(cmd *cobra.Command, args []string) {
 		conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
-		if err != nil {
-			panic(err)
-		}
+		utils.CheckError(err)
 		defer conn.Close()
 
 		ch, err := conn.Channel()
-		if err != nil {
-			panic(err)
-		}
-
+		utils.CheckError(err)
 		defer ch.Close()
 
 		q, err := ch.QueueDeclare(
@@ -37,9 +33,7 @@ var consumeCmd = &cobra.Command{
 			false,   // no-wait
 			nil,     // arguments
 		)
-		if err != nil {
-			panic(err)
-		}
+		utils.CheckError(err)
 
 		msgs, err := ch.Consume(
 			q.Name, // queue

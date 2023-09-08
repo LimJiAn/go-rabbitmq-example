@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/LimJiAn/go-rabbitmq-exam/utils"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/spf13/cobra"
 )
@@ -26,15 +27,11 @@ var publishCmd = &cobra.Command{
 		}
 
 		conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
-		if err != nil {
-			panic(err)
-		}
+		utils.CheckError(err)
 		defer conn.Close()
 
 		ch, err := conn.Channel()
-		if err != nil {
-			panic(err)
-		}
+		utils.CheckError(err)
 		defer ch.Close()
 
 		queue, err := ch.QueueDeclare(
@@ -45,14 +42,10 @@ var publishCmd = &cobra.Command{
 			false,   // no-wait
 			nil,     // arguments
 		)
-		if err != nil {
-			panic(err)
-		}
+		utils.CheckError(err)
 
 		count, err := strconv.Atoi(sendCount)
-		if err != nil {
-			panic(err)
-		}
+		utils.CheckError(err)
 
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()
@@ -69,9 +62,7 @@ var publishCmd = &cobra.Command{
 					Body:        []byte(body),
 				},
 			)
-			if err != nil {
-				panic(err)
-			}
+			utils.CheckError(err)
 			log.Printf(" 📧 Sent %s", body)
 		}
 	},
