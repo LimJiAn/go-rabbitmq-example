@@ -5,6 +5,7 @@ package cmd
 
 import (
 	"log"
+	"slices"
 
 	"github.com/LimJiAn/go-rabbitmq-exam/utils"
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -25,13 +26,79 @@ var consumeCmd = &cobra.Command{
 		utils.CheckError(err)
 		defer ch.Close()
 
+		exchageName, _ := cmd.Flags().GetString("exchange")
+		queueName, _ := cmd.Flags().GetString("queue")
+		if exchageName != "" {
+			routingKey, _ := cmd.Flags().GetString("routingkey")
+			exchangeType, _ := cmd.Flags().GetString("type")
+			if !slices.Contains(ExchangeTypes, exchangeType) {
+				log.Fatalf(" 🚫 exchange type must be one of %s", ExchangeTypes)
+			}
+
+			err = ch.ExchangeDeclare(
+				exchageName,  // name
+				exchangeType, // type
+				true,         // durable
+				false,        // auto-deleted
+				false,        // internal
+				false,        // no-wait
+				nil,          // arguments
+			)
+			utils.CheckError(err)
+
+			q, err := ch.QueueDeclare(
+				queueName, // name
+				false,     // durable
+				false,     // delete when unused
+				false,     // exclusive
+				false,     // no-wait
+				nil,       // arguments
+			)
+			utils.CheckError(err)
+
+			err = ch.QueueBind(
+				q.Name,      // queue name
+				routingKey,  // routing key
+				exchageName, // exchange
+				false,       // no-wait
+				nil,         // arguments
+			)
+			utils.CheckError(err)
+
+			msgs, err := ch.Consume(
+				q.Name, // queue
+				"",     // consumer
+				true,   // auto-ack
+				false,  // exclusive
+				false,  // no-local
+				false,  // no-wait
+				nil,    // args
+			)
+
+			forever := make(chan bool)
+			count := 0
+
+			go func() {
+				for d := range msgs {
+					count++
+					log.Printf(" 🆗 Received a message: %s / Count: %d", d.Body, count)
+
+				}
+			}()
+
+			log.Printf(" 📮 Exchange: %s, RoutingKey: %s, Queue: %s, Type: %s", exchageName, routingKey, queueName, exchangeType)
+			log.Printf(" ✋ Waiting for messages. To exit press CTRL+C")
+			<-forever
+			return
+		}
+
 		q, err := ch.QueueDeclare(
-			"hello", // name
-			false,   // durable
-			false,   // delete when unused
-			false,   // exclusive
-			false,   // no-wait
-			nil,     // arguments
+			queueName, // name
+			false,     // durable
+			false,     // delete when unused
+			false,     // exclusive
+			false,     // no-wait
+			nil,       // arguments
 		)
 		utils.CheckError(err)
 
@@ -61,13 +128,8 @@ var consumeCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(consumeCmd)
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// consumeCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// consumeCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	consumeCmd.Flags().StringP("exchange", "e", "", "Exchange name")
+	consumeCmd.Flags().StringP("type", "t", "direct", "Exchange type")
+	consumeCmd.Flags().StringP("routingkey", "r", "info", "Routing key")
+	consumeCmd.Flags().StringP("queue", "q", "hello", "Queue name")
 }

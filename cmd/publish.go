@@ -7,7 +7,7 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"strconv"
+	"slices"
 	"time"
 
 	"github.com/LimJiAn/go-rabbitmq-exam/utils"
@@ -15,17 +15,14 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var ExchangeTypes = []string{"direct", "fanout", "topic", "headers"}
+
 // publishCmd represents the publish command
 var publishCmd = &cobra.Command{
-	Use:   "publish [send message count]",
-	Short: "Send message to queue. Default count is 1",
+	Use:   "publish",
+	Short: "Send message to queue.",
 	Long:  "publish.go, consume.go together make a simple example of using RabbitMQ",
 	Run: func(cmd *cobra.Command, args []string) {
-		sendCount := "1"
-		if len(args) >= 1 {
-			sendCount = args[0]
-		}
-
 		conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
 		utils.CheckError(err)
 		defer conn.Close()
@@ -34,17 +31,56 @@ var publishCmd = &cobra.Command{
 		utils.CheckError(err)
 		defer ch.Close()
 
-		queue, err := ch.QueueDeclare(
-			"hello", // name
-			false,   // durable
-			false,   // delete when unused
-			false,   // exclusive
-			false,   // no-wait
-			nil,     // arguments
-		)
-		utils.CheckError(err)
+		exchageName, _ := cmd.Flags().GetString("exchange")
+		count, _ := cmd.Flags().GetInt("count")
+		if exchageName != "" {
+			routingKey, _ := cmd.Flags().GetString("routingkey")
+			exchangeType, _ := cmd.Flags().GetString("type")
+			if !slices.Contains(ExchangeTypes, exchangeType) {
+				log.Fatalf(" 🚫 exchange type must be one of %s", ExchangeTypes)
+			}
 
-		count, err := strconv.Atoi(sendCount)
+			err = ch.ExchangeDeclare(
+				exchageName,  // name
+				exchangeType, // type
+				true,         // durable
+				false,        // auto-deleted
+				false,        // internal
+				false,        // no-wait
+				nil,          // arguments
+			)
+			utils.CheckError(err)
+
+			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+			defer cancel()
+
+			for i := 1; i < count+1; i++ {
+				body := fmt.Sprintf("Hello World!! [%d]", i)
+				err = ch.PublishWithContext(ctx,
+					exchageName, // exchange
+					routingKey,  // routing key
+					false,       // mandatory
+					false,       // immediate
+					amqp.Publishing{
+						ContentType: "text/plain",
+						Body:        []byte(body),
+					},
+				)
+				utils.CheckError(err)
+				log.Printf(" 📧 Sent %s", body)
+			}
+			return
+		}
+
+		queueName, _ := cmd.Flags().GetString("queue")
+		queue, err := ch.QueueDeclare(
+			queueName, // name
+			false,     // durable
+			false,     // delete when unused
+			false,     // exclusive
+			false,     // no-wait
+			nil,       // arguments
+		)
 		utils.CheckError(err)
 
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -71,13 +107,9 @@ var publishCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(publishCmd)
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// publishCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// publishCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	publishCmd.Flags().StringP("exchange", "e", "", "Exchange name")
+	publishCmd.Flags().StringP("routingkey", "r", "info", "Routing key")
+	publishCmd.Flags().StringP("type", "t", "direct", "Exchange type [direct, fanout, topic, headers] (default \"direct\")")
+	publishCmd.Flags().StringP("queue", "q", "hello", "Queue name")
+	publishCmd.Flags().IntP("count", "c", 1, "Count of message to send")
 }
