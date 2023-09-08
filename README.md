@@ -39,6 +39,7 @@ rabbitmq  | 2023-09-06 09:25:43.553462+00:00 [info] <0.474.0>  * rabbitmq_web_di
 ![Rabbitmq dashboard](https://github.com/LimJiAn/go-rabbitmq-exam/assets/85569173/35ab9269-e1ae-4b52-8749-5ede37e2dae7)
 
 #### 4. Command
+* ###### Run publish, consume
 ```
 $ go run main.go --help
 go rabbitmq exam is a CLI tool for rabbitmq exam.
@@ -51,7 +52,7 @@ Available Commands:
   completion  Generate the autocompletion script for the specified shell
   consume     receive message from queue
   help        Help about any command
-  publish     Send message to queue. Default count is 1
+  publish     Send message to queue.
 
 Flags:
   -h, --help     help for go-rabbitmq-exam
@@ -59,7 +60,41 @@ Flags:
 
 Use "go-rabbitmq-exam [command] --help" for more information about a command.
 ```
+---
+* ###### Run publish
+```
+$ go run main.go publish --help
+publish.go, consume.go together make a simple example of using RabbitMQ
+
+Usage:
+  go-rabbitmq-exam publish [flags]
+
+Flags:
+  -c, --count int           count of message to send (default 1)
+  -e, --exchange string     exchange name
+  -h, --help                help for publish
+  -q, --queue string        queue name (default "hello")
+  -r, --routingkey string   routing key (default "info")
+  -t, --type string         exchange type [direct, fanout, topic, headers] (default "direct")
+```
+---
+* ###### Run consume
+```
+$ go run main.go consume --help
+publish.go, consume.go together make a simple example of using RabbitMQ
+
+Usage:
+  go-rabbitmq-exam consume [flags]
+
+Flags:
+  -e, --exchange string     exchange name
+  -h, --help                help for consume
+  -q, --queue string        queue name (default "hello")
+  -r, --routingkey string   routing key (default "info")
+  -t, --type string         exchange type (default "direct")
+```
 #### 5. Example
+* ###### Without flag
 ```bash
 $ go run main.go publish
 $ go run main.go consume
@@ -68,6 +103,24 @@ $ go run main.go consume
 2023/09/07 20:00:00  📧 Sent Hello World!!
 2023/09/07 20:00:00  ✋ Waiting for messages. To exit press CTRL+C
 2023/09/07 20:00:00  🆗 Received a message: Hello World!! / Count: 1
+```
+---
+* ###### With flag
+```bash
+$ go run main.go publish -e=test -c=3
+$ go run main.go consume -e=test
+```
+```console
+2023/09/08 20:00:00  📮 exchangeName: test, routingKey: info, exchangeType: direct, count: 3
+2023/09/08 20:00:00  📧 Sent Hello World!! [1]
+2023/09/08 20:00:00  📧 Sent Hello World!! [2]
+2023/09/08 20:00:00  📧 Sent Hello World!! [3]
+2023/09/08 20:00:00  📮 exchangeName: test, routingKey: info, exchangeType: direct, queue: hello
+2023/09/08 20:00:00  ✋ Waiting for messages. To exit press CTRL+C
+2023/09/08 20:00:00  🆗 Received a message: Hello World!! [1] / Count: 1
+2023/09/08 20:00:00  🆗 Received a message: Hello World!! [2] / Count: 2
+2023/09/08 20:00:00  🆗 Received a message: Hello World!! [3] / Count: 3
+
 ```
 ## 📚 Reference
 #### [RabbitMQ](https://www.rabbitmq.com/)
