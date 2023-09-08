@@ -26,9 +26,9 @@ var consumeCmd = &cobra.Command{
 		utils.CheckError(err)
 		defer ch.Close()
 
-		exchageName, _ := cmd.Flags().GetString("exchange")
+		exchangeName, _ := cmd.Flags().GetString("exchange")
 		queueName, _ := cmd.Flags().GetString("queue")
-		if exchageName != "" {
+		if exchangeName != "" {
 			routingKey, _ := cmd.Flags().GetString("routingkey")
 			exchangeType, _ := cmd.Flags().GetString("type")
 			if !slices.Contains(ExchangeTypes, exchangeType) {
@@ -36,7 +36,7 @@ var consumeCmd = &cobra.Command{
 			}
 
 			err = ch.ExchangeDeclare(
-				exchageName,  // name
+				exchangeName, // name
 				exchangeType, // type
 				true,         // durable
 				false,        // auto-deleted
@@ -57,11 +57,11 @@ var consumeCmd = &cobra.Command{
 			utils.CheckError(err)
 
 			err = ch.QueueBind(
-				q.Name,      // queue name
-				routingKey,  // routing key
-				exchageName, // exchange
-				false,       // no-wait
-				nil,         // arguments
+				q.Name,       // queue name
+				routingKey,   // routing key
+				exchangeName, // exchange
+				false,        // no-wait
+				nil,          // arguments
 			)
 			utils.CheckError(err)
 
@@ -86,7 +86,7 @@ var consumeCmd = &cobra.Command{
 				}
 			}()
 
-			log.Printf(" 📮 Exchange: %s, RoutingKey: %s, Queue: %s, Type: %s", exchageName, routingKey, queueName, exchangeType)
+			log.Printf(" 📮 Exchange: %s, RoutingKey: %s, Queue: %s, Type: %s", exchangeName, routingKey, queueName, exchangeType)
 			log.Printf(" ✋ Waiting for messages. To exit press CTRL+C")
 			<-forever
 			return
