@@ -128,8 +128,8 @@ var consumeCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(consumeCmd)
 
-	consumeCmd.Flags().StringP("exchange", "e", "", "Exchange name")
-	consumeCmd.Flags().StringP("type", "t", "direct", "Exchange type")
-	consumeCmd.Flags().StringP("routingkey", "r", "info", "Routing key")
-	consumeCmd.Flags().StringP("queue", "q", "hello", "Queue name")
+	consumeCmd.Flags().StringP("exchange", "e", "", "exchange name")
+	consumeCmd.Flags().StringP("type", "t", "direct", "exchange type")
+	consumeCmd.Flags().StringP("routingkey", "r", "info", "routing key")
+	consumeCmd.Flags().StringP("queue", "q", "hello", "queue name")
 }

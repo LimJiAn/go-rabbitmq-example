@@ -107,9 +107,9 @@ var publishCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(publishCmd)
 
-	publishCmd.Flags().StringP("exchange", "e", "", "Exchange name")
-	publishCmd.Flags().StringP("routingkey", "r", "info", "Routing key")
-	publishCmd.Flags().StringP("type", "t", "direct", "Exchange type [direct, fanout, topic, headers] (default \"direct\")")
-	publishCmd.Flags().StringP("queue", "q", "hello", "Queue name")
-	publishCmd.Flags().IntP("count", "c", 1, "Count of message to send")
+	publishCmd.Flags().StringP("exchange", "e", "", "exchange name")
+	publishCmd.Flags().StringP("routingkey", "r", "info", "routing key")
+	publishCmd.Flags().StringP("type", "t", "direct", "exchange type [direct, fanout, topic, headers]")
+	publishCmd.Flags().StringP("queue", "q", "hello", "queue name")
+	publishCmd.Flags().IntP("count", "c", 1, "count of message to send")
 }
