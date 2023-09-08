@@ -40,6 +40,9 @@ var publishCmd = &cobra.Command{
 				log.Fatalf(" 🚫 exchange type must be one of %s", ExchangeTypes)
 			}
 
+			log.Printf(" 📮 exchangeName: %s, routingKey: %s, exchangeType: %s, count: %d",
+				exchageName, routingKey, exchangeType, count)
+
 			err = ch.ExchangeDeclare(
 				exchageName,  // name
 				exchangeType, // type

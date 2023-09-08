@@ -86,7 +86,8 @@ var consumeCmd = &cobra.Command{
 				}
 			}()
 
-			log.Printf(" 📮 Exchange: %s, RoutingKey: %s, Queue: %s, Type: %s", exchangeName, routingKey, queueName, exchangeType)
+			log.Printf(" 📮 exchangeName: %s, routingKey: %s, exchangeType: %s, queue: %s",
+				exchangeName, routingKey, exchangeType, queueName)
 			log.Printf(" ✋ Waiting for messages. To exit press CTRL+C")
 			<-forever
 			return
