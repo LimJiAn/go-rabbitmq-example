@@ -36,7 +36,7 @@ rabbitmq  | 2023-09-06 09:25:43.553462+00:00 [info] <0.474.0>  * rabbitmq_web_di
 
 ```
 #### 3. You can see useful RabbitMQ dashboard at [localhost:15672](http://localhost:15672)
-![Rabbitmq dashboard](https://github.com/LimJiAn/go-rabbitmq-exam/assets/85569173/35ab9269-e1ae-4b52-8749-5ede37e2dae7)
+![Rabbitmq dashboard](https://github.com/LimJiAn/go-rabbitmq-exam/assets/85569173/73e8f14c-98e8-4c12-a59f-eca323a54816)
 
 #### 4. Command
 * ###### Run publish, consume
