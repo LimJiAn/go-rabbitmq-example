@@ -1,14 +1,14 @@
-# go-rabbitmq-exam
+# go-rabbitmq-example
 [![Go](https://img.shields.io/badge/go-1.21-blue.svg?style=for-the-badge&logo=go&logoColor=white)](https://go.dev/dl/)
 [![amqp091-go](https://img.shields.io/badge/amqp091go-0.9.2-orange.svg?style=for-the-badge&logo=go&logoColor=white)](https://github.com/rabbitmq/amqp091-go)
 
 > #### 🎯 [docker-compose](https://github.com/docker/compose), [cobra](https://github.com/spf13/cobra) 를 사용한 [rabbitmq](https://github.com/rabbitmq/amqp091-go) example 입니다.
-> #### 🎯 go-rabbitmq-exam using docker-compose and cobra.
+> #### 🎯 go-rabbitmq-example using docker-compose and cobra.
 
 
 ## ⚙️ Installation
 ```shell
-$ git clone https://github.com/LimJiAn/go-rabbitmq-exam
+$ git clone https://github.com/LimJiAn/go-rabbitmq-example
 ```
 ## 👀 Usage
 #### 1. Run RabbitMQ Server (docker-compose.yml)
@@ -45,8 +45,8 @@ $ go run main.go --help
 go rabbitmq exam is a CLI tool for rabbitmq exam.
 
 Usage:
-  go-rabbitmq-exam [flags]
-  go-rabbitmq-exam [command]
+  go-rabbitmq-example [flags]
+  go-rabbitmq-example [command]
 
 Available Commands:
   completion  Generate the autocompletion script for the specified shell
@@ -55,10 +55,10 @@ Available Commands:
   publish     Send message to queue.
 
 Flags:
-  -h, --help     help for go-rabbitmq-exam
+  -h, --help     help for go-rabbitmq-example
   -t, --toggle   Help message for toggle
 
-Use "go-rabbitmq-exam [command] --help" for more information about a command.
+Use "go-rabbitmq-example [command] --help" for more information about a command.
 ```
 ---
 * ###### Run publish
@@ -67,7 +67,7 @@ $ go run main.go publish --help
 publish.go, consume.go together make a simple example of using RabbitMQ
 
 Usage:
-  go-rabbitmq-exam publish [flags]
+  go-rabbitmq-example publish [flags]
 
 Flags:
   -c, --count int           count of message to send (default 1)
@@ -84,7 +84,7 @@ $ go run main.go consume --help
 publish.go, consume.go together make a simple example of using RabbitMQ
 
 Usage:
-  go-rabbitmq-exam consume [flags]
+  go-rabbitmq-example consume [flags]
 
 Flags:
   -e, --exchange string     exchange name
