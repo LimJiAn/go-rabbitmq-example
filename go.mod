@@ -1,6 +1,6 @@
-module github.com/LimJiAn/go-rabbitmq-exam
+module github.com/LimJiAn/go-rabbitmq-example
 
-go 1.21.0
+go 1.21.1
 
 require (
 	github.com/rabbitmq/amqp091-go v1.8.1

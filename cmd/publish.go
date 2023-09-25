@@ -10,7 +10,7 @@ import (
 	"slices"
 	"time"
 
-	"github.com/LimJiAn/go-rabbitmq-exam/utils"
+	"github.com/LimJiAn/go-rabbitmq-example/utils"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/spf13/cobra"
 )
